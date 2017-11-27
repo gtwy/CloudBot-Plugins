@@ -9,4 +9,4 @@ James' plugins for CloudBot.
 Link or copy these .py files into CloudBot's plugins directory. Read comments in each .py file for configuration options. With certain plugins, you must also add new API keys to CloudBot's config.json file.
 
 ## Support
-I'll do the best I can to answer questions/issues. I've been on IRC for over 15 years. I'll be maintaining these scripts for years at least.
+I'll do the best I can to answer questions/issues. I've been on IRC for 15 years. I'll maintain these scripts for years, at least.
