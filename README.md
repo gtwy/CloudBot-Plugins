@@ -6,7 +6,7 @@ James' plugins for CloudBot.
 * PRAW python library ([Link](https://praw.readthedocs.io))
 
 ## How to use
-Put the .py file into the plugin directory. Read comments in the .py file for additional help.
+Link or copy these .py files into CloudBot's plugins directory. Read comments in each .py file for configuration options. With certain plugins, you must also add new API keys to CloudBot's config.json file.
 
 ## Support
-Post questions as issues and I'll respond as best I can
+I'll do the best I can to answer questions/issues. I've been on IRC for over 15 years. I'll be maintaining these scripts for years at least.
