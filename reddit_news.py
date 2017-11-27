@@ -4,37 +4,82 @@
 # (Before running script, please see comments below)
 #
 # Thanks to linuxdaemon for some help with @hook.periodic & conn.message
+# Code heavily influenced by remind.py plugin
+
+from datetime import datetime
+
+import time
+import asyncio
+
+from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
+
 from cloudbot import hook
 from cloudbot.util import database
+from cloudbot.util.timeparse import time_parse
+from cloudbot.util.timeformat import format_time, time_since
+
 import praw
 
+table = Table('reddit_news',
+        database.metadata,
+        Column('redditid', String(10)),
+        Column('subreddit', String(20)),
+        Column('dateadded', DateTime),
+        PrimaryKeyConstraint('redditid','subreddit','dateadded')
+)
 
 @hook.on_start()
 def load_api(bot):
     global red_api
-
-    # Create these 4 api keys in config.json before running
+    
+    # Create 4 new api keys in config.json to match those below this line
     r_client_id = bot.config.get("api_keys", {}).get("reddit_news_client_id", None)
     r_client_secret = bot.config.get("api_keys", {}).get("reddit_news_client_secret", None)
     r_username = bot.config.get("api_keys", {}).get("reddit_news_username", None)
     r_password = bot.config.get("api_keys", {}).get("reddit_news_password", None)
-
-    # Change if you want
+    
+    # Change if you want. Reddit requires a "valid user agent" and prohibits "spoofing"
     r_user_agent = "linux:sh.blindfi.bot:v0.0.1 (by /u/PCGamerJim)"
 
     if not all((r_client_id, r_client_secret, r_username, r_password)):
         red_api = None
         return
     else:
-        red_api = praw.Reddit(client_id=r_client_id, client_secret=r_client_secret, user_agent=r_user_agent, username=r_username, password=r_password)
+        red_api = praw.Reddit(client_id=r_client_id, client_secret=r_client_secret, user_agent=r_user_agent, username=r_username, password=r_password) 
 
+@asyncio.coroutine
+def add_entry(async, db, redditid, subreddit, dateadded):
+    query = table.insert().values(
+            redditid=redditid,
+            subreddit=subreddit,
+            dateadded=dateadded
+    )
+    yield from async(db.execute, query)
+    yield from async(db.commit)
+
+@asyncio.coroutine
+@hook.on_start()
+def load_cache(async, db):
+    global reddit_news_cache
+    reddit_news_cache = []
+
+    for redditid, subreddit, dateadded in (yield from async(_load_cache_db, db)):
+        reddit_news_cache.append((redditid, subreddit, dateadded))
+
+def _load_cache_db(db):
+    query = db.execute(table.select())
+    return [(row["redditid"], row["subreddit"], row["dateadded"]) for row in query]
+
+@asyncio.coroutine
 @hook.periodic(1*60)
-def reddit_news(bot):
+def reddit_news(bot, async, db):
+    dateadded = datetime.now()
     if red_api is None:
         print ("This command requires a reddit API key.")
     else:
-        # Edit the next 3 variables to your preference. Network and channel should reflect config.json
-        subreddits = ['netsec', 'ReverseEngineering', 'rootkit', 'blackhat', 'ProgrammerHumor']
+        # Change subreddits, network and channel to match your desired settings
+        # (Want multi channel or multi network? Code it and send a pull request!)
+        subreddits = ['netsec', 'ReverseEngineering', 'malware', 'blackhat', 'pwned']
         network = 'blindfish'
         channel = '#fish'
         if network in bot.connections:
@@ -46,13 +91,13 @@ def reddit_news(bot):
                     if out == '':
                         for submission in red_api.subreddit(subreddit).hot(limit=3):
                             if not submission.stickied:
-                                with open('reddit.txt', 'r') as searchfile:
-                                    for line in searchfile:
-                                        if submission.id in line:
-                                            submitted = True
+                                for result in reddit_news_cache:
+                                    cacheid, cachesub, cachedate = result
+                                    if submission.id == cacheid :
+                                        submitted = True
                                 if not submitted and out == '':
                                     out = u'Trending on /r/{}: {} (https://redd.it/{})'.format(subreddit, submission.title, submission.id)
-                                    with open('reddit.txt', 'a') as file:
-                                        file.writelines(submission.id + '\n')
+                                    yield from add_entry(async, db, submission.id, subreddit, dateadded)
+                                    yield from load_cache(async, db)
                 if out != '':
                     conn.message(channel, out)
