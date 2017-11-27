@@ -1,5 +1,5 @@
-# This script watches the subreddits of your choosing.
-# When a new post reaches #1 on its subreddit, the bot will link it here.
+# This script watches the subreddit(s) of your choosing.
+# When a post reaches #1 on its subreddit, the bot will link it here.
 #
 # (Before running script, please see comments below)
 #
