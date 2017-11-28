@@ -1,10 +1,10 @@
-# James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
+#   James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
-# This script watches the Subreddits of your choosing.
-# When a new post reaches #1 on any given subreddit, the bot links to it
+#   This script watches the Subreddits of your choosing.
+#   When a new post reaches #1 on any given subreddit, the bot links to it
 #
-# Requirements:
-#     * PRAW Reddit API        https://praw.readthedocs.io
+#   Requirements:
+#      * PRAW Reddit API        https://praw.readthedocs.io
 
 from datetime import datetime
 import time

@@ -1,10 +1,9 @@
-# James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
+#   James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
-# This script watches Twitter users of your choosing.
-# When they tweet, thire tweets are echoed on IRC
+#   This script watches Twitter feeds & posts the tweets into IRC
 #
-# Requirements:
-#     * python-twitter API      https://github.com/bear/python-twitter
+#   Requirements:
+#      * python-twitter API      https://github.com/bear/python-twitter
 
 
 from datetime import datetime
