@@ -1,23 +1,17 @@
-# This script watches the subreddit(s) of your choosing.
-# When a post reaches #1 on its subreddit, the bot will link it here.
+# James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
-# (Before running script, please see comments below)
+# This script watches Twitter users of your choosing.
+# When they tweet, thire tweets are echoed on IRC
 #
-# Thanks to linuxdaemon for some help with @hook.periodic & conn.message
-# Code heavily influenced by remind.py plugin
+# Requirements:
+#     * PRAW Reddit API        https://praw.readthedocs.io
 
 from datetime import datetime
-
 import time
 import asyncio
-
 from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
-
 from cloudbot import hook
 from cloudbot.util import database
-from cloudbot.util.timeparse import time_parse
-from cloudbot.util.timeformat import format_time, time_since
-
 import praw
 
 table = Table('reddit_news',
@@ -96,8 +90,7 @@ def reddit_news(bot, async, db):
                                     if submission.id == cacheid :
                                         submitted = True
                                 if not submitted and out == '':
-                                    out = u'Trending on /r/{}: {} (https://redd.it/{})'.format(subreddit, submission.title, submission.id)
+                                    out = u'[Reddit] Trending on /r/{}: {} (https://redd.it/{})'.format(subreddit, submission.title, submission.id)
                                     yield from add_entry(async, db, submission.id, subreddit, dateadded)
                                     yield from load_cache(async, db)
-                if out != '':
-                    conn.message(channel, out)
+                                    conn.message(channel, out)
