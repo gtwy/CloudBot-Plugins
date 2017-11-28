@@ -1,7 +1,7 @@
 # James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
-# This script watches Twitter users of your choosing.
-# When they tweet, thire tweets are echoed on IRC
+# This script watches the Subreddits of your choosing.
+# When a new post reaches #1 on any given subreddit, the bot links to it
 #
 # Requirements:
 #     * PRAW Reddit API        https://praw.readthedocs.io
