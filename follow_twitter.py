@@ -15,9 +15,6 @@ from cloudbot import hook
 from cloudbot.util import database
 import twitter
 
-# Index for iterating through twitter users.
-global twitter_u = 0
-
 table = Table('follow_twitter',
         database.metadata,
         Column('twitterid', String(100)),
@@ -30,6 +27,7 @@ def load_api(bot):
     global twitter_api
 
     # You need to have valid api keys in config.json
+
     consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key", None)
     consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret", None)
     oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token", None)
@@ -70,7 +68,7 @@ def _load_cache_db(db):
     return [(row["twitterid"], row["dateadded"]) for row in query]
 
 @asyncio.coroutine
-@hook.periodic(2*60)
+@hook.periodic(6*60) # Twitter only allows 15 API calls in 15 minutes. Each user counts as an API call. Keep that in mind.
 def follow_twitter(bot, async, db):
     dateadded = datetime.now()
     if twitter_api is None:
@@ -78,48 +76,37 @@ def follow_twitter(bot, async, db):
     else:
         # Change twitter users, network and channel to match your desired settings
         # (Want multi channel or multi network? Code it and send a pull request!)
-        twitter_users = ['Gtwy', 'dkalinosky', 'toshibatoast', 'borlandts', 'infaroot', 'RomanHeisenberg']
+        twitter_users = ['Gtwy', 'dkalinosky', 'borlandts']
         network = 'blindfish'
         channel = '#fish'
         # Stops plugin from crashing when network is offline
         if network in bot.connections:
             conn = bot.connections[network]
             if conn.ready:
-                # Pull tweets from just one user per run. Twitter only allows 15 API calls per 15 minute period & each user is a separate API call. 
-                # Plus, it's nice to separate different user's tweets so that the bot isn't posting everything at once.
-                twitter_user = twitter_users[twitter_u]
-                intro = u'[Twitter] @{} wrote: '.format(twitter_user)
-                tweets = twitter_api.GetUserTimeline(screen_name=twitter_user,
-                                                        count=5, # post up to this many tweets per user
-                                                        include_rts=False,
-                                                        trim_user=True,
-                                                        exclude_replies=True
-                )
-                # Iterates timeline backwards so tweets post in chronological order
-                tweet_i = len(tweets)-1
-                while tweet_i >= 0:
-                    # Check if tweet has been posted before
-                    submitted = False
-                    for result in follow_twitter_cache:
-                        cacheid, cachedate = result
-                        if tweets[tweet_i].id == cacheid:
-                            submitted = True
-                    # If the tweet wasn't posted before, continue:
-                    if not submitted:
-                        # Build the IRC message
-                        text = tweets[tweet_i].text.replace('\n',' ').replace('  ',' ').rstrip()
-                        url = u'https://twitter.com/{}/status/{}'.format(twitter_user,tweets[tweet_i].id_str)
-                        out = u'{}{}  ({})'.format(intro,text,url)
-                        # Send the message to IRC
-                        conn.message(channel, out)
-                        # Record that we posted this tweet
-                        yield from add_entry(async, db, tweets[tweet_i].id_str, dateadded)
-                        yield from load_cache(async, db)
-                    # Iterate to next tweet in user's timeline
-                    tweet_i -= 1
-
-                # Iterate to next user. Don't confuse this with "tweet_i"
-                if twitter_u == len(twitter_users)-1:
-                    twitter_u = 0
-                else:
-                    twitter_u += 1
+                for twitter_user in twitter_users:
+                    intro = u'[Twitter] @{} wrote: '.format(twitter_user)
+                    tweets = twitter_api.GetUserTimeline(screen_name=twitter_user,
+                                                            count=5, # post up to this many tweets per user
+                                                            include_rts=False,
+                                                            trim_user=True,
+                                                            exclude_replies=True
+                    )
+                    # Iterates timeline backwards so tweets post in chronological order
+                    for tweet_i in range(len(tweets)-1,-1,-1):
+                        # Check if tweet has been posted before
+                        submitted = False
+                        for result in follow_twitter_cache:
+                            cacheid, cachedate = result
+                            if tweets[tweet_i].id == cacheid:
+                                submitted = True
+                        # If the tweet wasn't posted before, continue:
+                        if not submitted:
+                            # Build the IRC message
+                            text = tweets[tweet_i].text.replace('\n',' ').replace('  ',' ').rstrip()
+                            url = u'https://twitter.com/{}/status/{}'.format(twitter_user,tweets[tweet_i].id_str)
+                            out = u'{}{}  ({})'.format(intro,text,url)
+                            # Send the message to IRC
+                            conn.message(channel, out)
+                            # Record that we posted this tweet
+                            yield from add_entry(async, db, tweets[tweet_i].id_str, dateadded)
+                            yield from load_cache(async, db)
