@@ -1,6 +1,6 @@
 #   James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
-#   This script watches Twitter feeds & posts the tweets into IRC
+#   This script watches Twitter feeds & posts the tweets to IRC
 #
 #   Requirements:
 #      * python-twitter API      https://github.com/bear/python-twitter
