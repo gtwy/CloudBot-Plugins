@@ -1,0 +1,17 @@
+{
+    "_comment": "Below is an example of what API keys you need for my plugins.",
+
+    "api_keys": {
+        "reddit_news_client_id": "",
+        "reddit_news_client_secret": "",
+        "reddit_news_username": "",
+        "reddit_news_password": "",
+        "twitch_client_id": "",
+        "twitch_client_secret": "",
+        "twitter_consumer_key": "",
+        "twitter_consumer_secret": "",
+        "twitter_access_token": "",
+        "twitter_access_secret": ""
+    }
+}
+
