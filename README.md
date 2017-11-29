@@ -11,4 +11,4 @@ follow_twitch|Devel|Follow specified channels & announce when they go live on IR
 Install all necessary prerequisites. Link or copy these .py files into CloudBot's plugins directory. Vim each .py file for configuration options. You must also add new API keys to CloudBot's config.json file.
 
 ## Support
-I'll do the best I can to answer questions/issues. I've been on IRC for 15 years and plan to be there for many more.
+I'll do the best I can to answer questions/issues. Feel free to contact me through the "Issues" tab at the top or on Twitter [@Gtwy](https://twitter.com/Gtwy).
