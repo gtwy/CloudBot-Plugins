@@ -26,7 +26,6 @@ def load_api(bot):
     global twitter_api
 
     # You need to have valid api keys in config.json
-
     consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key", None)
     consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret", None)
     oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token", None)
@@ -82,7 +81,7 @@ def follow_twitter(bot, async, db):
         if network in bot.connections:
             conn = bot.connections[network]
             if conn.ready:
-		# Pull tweets from just one user per run to satisfy Twitter's draconian rate limiting.
+		# Pull tweets from just one user per run to satisfy Twitter's draconian rate limit.
                 if 'twitter_u' not in globals():
                     global twitter_u
                     twitter_u = 0
@@ -102,7 +101,6 @@ def follow_twitter(bot, async, db):
                         cacheid, cachedate = result
                         if tweets[tweet_i].id_str == cacheid:
                             submitted = True
-                    # If the tweet wasn't posted before, continue:
                     if not submitted:
                         # Build the IRC message
                         text = tweets[tweet_i].text.replace('\n',' ').replace('  ',' ').rstrip()
@@ -114,7 +112,7 @@ def follow_twitter(bot, async, db):
                         yield from add_entry(async, db, tweets[tweet_i].id_str, dateadded)
                         yield from load_cache(async, db)
                 
-		# Iterate to next user. Don't confuse this with "tweet_i"
+		# Iterate to next user
                 if twitter_u == len(twitter_users)-1:
                 	twitter_u = 0
                 else:
