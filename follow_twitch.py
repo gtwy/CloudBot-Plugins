@@ -56,7 +56,7 @@ def follow_twitter(bot, async, db):
                     if stream.channel.id not in live_ids:
                         live_ids.append(stream.channel.id)
                         # Post to channel that someone new has gone live
-                        out = u'[Twitch] {} is live: [{} at {}p] {} ({})'.format(stream.channel.display_name, stream.channel.game, stream.video_height, stream.channel.status, stream.channel.url)
+                        out = u'[Twitch] {} is live: [{}] {} ({})'.format(stream.channel.display_name, stream.channel.game, stream.channel.status, stream.channel.url)
                         conn.message(channel, out)
                 # Remove them from the live cache if they are no longer live
                 for live_id in live_ids:
