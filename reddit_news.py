@@ -29,17 +29,15 @@ def load_api(bot):
     # Create 4 new api keys in config.json to match those below this line
     r_client_id = bot.config.get("api_keys", {}).get("reddit_news_client_id", None)
     r_client_secret = bot.config.get("api_keys", {}).get("reddit_news_client_secret", None)
-    r_username = bot.config.get("api_keys", {}).get("reddit_news_username", None)
-    r_password = bot.config.get("api_keys", {}).get("reddit_news_password", None)
     
     # Change if you want. Reddit requires a "valid user agent" and prohibits "spoofing"
     r_user_agent = "linux:sh.blindfi.bot:v0.0.1 (by /u/PCGamerJim)"
 
-    if not all((r_client_id, r_client_secret, r_username, r_password)):
+    if not all((r_client_id, r_client_secret)):
         red_api = None
         return
     else:
-        red_api = praw.Reddit(client_id=r_client_id, client_secret=r_client_secret, user_agent=r_user_agent, username=r_username, password=r_password) 
+        red_api = praw.Reddit(client_id=r_client_id, client_secret=r_client_secret, user_agent=r_user_agent) 
 
 @asyncio.coroutine
 def add_entry(async, db, redditid, subreddit, dateadded):

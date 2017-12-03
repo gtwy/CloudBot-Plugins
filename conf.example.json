@@ -4,8 +4,6 @@
     "api_keys": {
         "reddit_news_client_id": "",
         "reddit_news_client_secret": "",
-        "reddit_news_username": "",
-        "reddit_news_password": "",
         "twitch_client_id": "",
         "twitch_client_secret": "",
         "twitter_consumer_key": "",
