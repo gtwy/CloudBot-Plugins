@@ -45,7 +45,7 @@ At the bottom of your config, add a section named "james-plugins." Don't forget 
 ```
 
 ## Considerations
-Interval durations outside these ranges will exceed the API limits of each service. Your API key will get rate limited and eventually blacklisted.
+Interval durations outside these ranges will exceed the API limits of each service resulting in your API key being rate limited and eventually blacklisted.
 
 Service | Minimum Hook Interval | Maximum Hook Interval
 --------|-----------------------|----------------------
@@ -53,7 +53,7 @@ reddit|60|Unlimited
 twitter|60|Unlimited
 twitch|30|Unlimited
 
-Only one twitter account is polled at each interval. Hence, yhe more people you follow, the more delayed their tweets will be. 
+Only one twitter account is polled at each interval. Hence, the more people you follow, the more delayed their tweets will be. 
 
 Future versions will use a different format for server and channel in config.json.
 
