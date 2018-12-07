@@ -26,13 +26,19 @@ table = Table('reddit_news',
 def load_api(bot):
     global red_api
     
-    # Create 4 new api keys in config.json to match those below this line
+    # Gets API keys from config.json
     r_client_id = bot.config.get("api_keys", {}).get("reddit_news_client_id", None)
     r_client_secret = bot.config.get("api_keys", {}).get("reddit_news_client_secret", None)
     
     # Change if you want. Reddit requires a "valid user agent" and prohibits "spoofing"
     r_user_agent = "linux:sh.blindfi.bot:v0.0.1 (by /u/PCGamerJim)"
 
+    # Get hook time from config.json
+    reddit_news_hook_time = bot.config.get("james-plugins", {}).get("reddit_news_hook_time", None)
+    if not reddit_news_hook_time:
+        reddit_news_hook_time = 5*60
+
+    # Does the API key exist?
     if not all((r_client_id, r_client_secret)):
         red_api = None
         return
@@ -63,17 +69,21 @@ def _load_cache_db(db):
     return [(row["redditid"], row["subreddit"], row["dateadded"]) for row in query]
 
 @asyncio.coroutine
-@hook.periodic(1*60)
+@hook.periodic(6 * 60 * 60) # Minimum is 60
 def reddit_news(bot, async, db):
     dateadded = datetime.now()
     if red_api is None:
         print ("This command requires a reddit API key.")
     else:
-        # Change subreddits, network and channel to match your desired settings
-        # (Want multi channel or multi network? Code it and send a pull request!)
-        subreddits = ['netsec', 'ReverseEngineering', 'malware', 'blackhat', 'pwned']
-        network = 'blindfish'
-        channel = '#fish'
+        subreddits = bot.config.get("james-plugins", {}).get("reddit_news_subreddits", None)
+        if not subreddits:
+            subreddits = ['netsec', 'ReverseEngineering', 'malware', 'blackhat', 'pwned']
+        network = bot.config.get("james-plugins", {}).get("reddit_news_output_server", None)
+        if not network:
+            network = 'freenode'
+        channel = bot.config.get("james-plugins", {}).get("reddit_news_output_channel", None)
+        if not channel:
+            channel = '#lowtech-dev'
         if network in bot.connections:
             conn = bot.connections[network]
             if conn.ready:

@@ -13,9 +13,12 @@ from twitch import TwitchClient
 def load_api(bot):
     global twitch_api
 
-    # You need to have valid api keys in config.json. Client secret should contain "oauth:"
+    # Get API keys from config.json 
     twitch_client_id = bot.config.get("api_keys", {}).get("twitch_client_id", None)
     twitch_client_secret = bot.config.get("api_keys", {}).get("twitch_client_secret", None)
+
+    if 'oath:' not in twitch_client_secret:
+        twitch_client_secret = 'oath:' + twitch_client_secret
 
     if not all((twitch_client_id, twitch_client_secret)):
         twitch_api = None
@@ -23,16 +26,20 @@ def load_api(bot):
     else:
         twitch_api = TwitchClient(twitch_client_id, twitch_client_secret)
 
-@hook.periodic(1*30)
+@hook.periodic(1*30) # Minimum is 30
 def follow_twitter(bot, async, db):
     if twitch_api is None:
         print ("This command requires a Twitch API key.")
     else:
-        # Change twitch channel names (Up to 25)
-        twitch_channels = ['pcJIM', 'thederek412', 'toshibatoast', 'javagoogles', 'infaroot']
-        # Change IRC network and channel name to match your server
-        network = 'blindfish'
-        channel = '#fish'
+        twitch_channels = bot.config.get("james-plugins", {}).get("follow_twitch_channels", None)
+        if not twitch_channels:
+            twitch_channels = ['pcJIM', 'javagoogles']
+        network = bot.config.get("james-plugins", {}).get("follow_twitch_output_server", None)
+        if not network:
+            network = 'freenode'    
+        channel = bot.config.get("james-plugins", {}).get("follow_twitch_output_channel", None)
+        if not channel:
+            channel = '#lowtech-dev'
         # Stops plugin from crashing when IRC network is offline
         if network in bot.connections:
             conn = bot.connections[network]

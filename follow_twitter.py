@@ -25,7 +25,7 @@ table = Table('follow_twitter',
 def load_api(bot):
     global twitter_api
 
-    # You need to have valid api keys in config.json
+    # Get API keys from config.json
     consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key", None)
     consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret", None)
     oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token", None)
@@ -35,7 +35,7 @@ def load_api(bot):
         twitter_api = None
         return
     else:
-        # NOTE: This is a different API than what twitter.py uses
+        # NOTE: This is a different API than that used by CloudBot's twitter.py
         twitter_api = twitter.Api(consumer_key=consumer_key,
                 consumer_secret=consumer_secret,
                 access_token_key=oauth_token,
@@ -66,17 +66,21 @@ def _load_cache_db(db):
     return [(row["twitterid"], row["dateadded"]) for row in query]
 
 @asyncio.coroutine
-@hook.periodic(1*60) # Twitter only allows 15 API calls in 15 minutes. Each user counts as an API call. Keep that in mind.
+@hook.periodic(60) # Minimum is 60
 def follow_twitter(bot, async, db):
     dateadded = datetime.now()
     if twitter_api is None:
         print ("This command requires a Twitter API key.")
     else:
-        # Change twitter users, network and channel to match your desired settings
-        # (Want multi channel or multi network? Code it and send a pull request!)
-        twitter_users = ['Gtwy', 'dkalinosky', 'toshibatoast', 'borlandts', 'infaroot', 'RomanHeisenberg']
-        network = 'blindfish'
-        channel = '#fish'
+        twitter_users = bot.config.get("james-plugins", {}).get("follow_twitter_accounts", None)
+        if not twitter_users:
+            twitter_users = ['Gtwy', 'hiredbeard', 'fauxicles']
+        network = bot.config.get("james-plugins", {}).get("follow_twitter_output_server", None)
+        if not network:
+            network = 'freenode'
+        channel = bot.config.get("james-plugins", {}).get("follow_twitter_output_channel", None)
+        if not channel:
+            channel = '#lowtech-dev'
         # Stops plugin from crashing when network is offline
         if network in bot.connections:
             conn = bot.connections[network]

@@ -1,14 +1,61 @@
 # CloudBot-Plugins
-James' plugins for CloudBot. You must be running the [snoonetIRC fork of CloudBot](https://github.com/snoonetIRC/CloudBot) to use these plugins.
+James' plugins for [snoonetIRC's fork of CloudBot](https://github.com/snoonetIRC/CloudBot).
 
 Plugin | Status | Description | Prerequisites
 -------|--------|-------------|--------------
-reddit_news|Stable|Follows specified subreddits & echo when top post changes on IRC|[PRAW](https://praw.readthedocs.io)
-follow_twitter|Stable|Follow specified accounts & echo their tweets on IRC|[python-twitter](https://github.com/bear/python-twitter)
-follow_twitch|Stable|Follow specified channels & announce when they go live on IRC|[python-twitch-client](https://github.com/tsifrer/python-twitch-client)
+reddit news|Stable|Follows specified subreddits & echo when top post changes on IRC|[PRAW](https://praw.readthedocs.io)
+follow twitter|Stable|Follow specified accounts & echo their tweets on IRC|[python-twitter](https://github.com/bear/python-twitter)
+follow twitch|Stable|Follow specified channels & announce when they go live on IRC|[python-twitch-client](https://github.com/tsifrer/python-twitch-client)
 
 ## How to use
-Install all necessary prerequisites. Link or copy these .py files into CloudBot's plugins directory. Vim each .py file for configuration options. You must also add new API keys to CloudBot's config.json file.
+Install all necessary prerequisites linked in the table above.
+
+Copy plugin .py files into CloudBot's plugins directory.
+
+Edit CloudBot's config.json file. Add read-only API keys for the services you intend to use.
+
+At the bottom of your config, add a section named "james-plugins." Don't forget to add a comma after closing the logging block. It should look something like this. Adjust settings accordingly.
+
+```
+    },
+    "james-plugins": {
+        "reddit_news_subreddits": [
+                "netsec",
+		"ReverseEngineering",
+		"malware",
+		"blackhat"
+        ],
+        "reddit_news_output_server": "freenode",
+        "reddit_news_output_channel":"#lowtech-dev"
+        "follow_twitter_accounts": [
+                "Gtwy",
+                "hiredbeard",
+                "fauxicles"
+        ],
+        "follow_twitter_output_server": "freenode",
+        "follow_twitter_output_channel": "#lowtech-dev",
+	"follow_twitch_channels": [
+		"pcJIM",
+		"javagoogles"
+	],
+	"follow_twitch_output_server": "freenode",
+	"follow_twitch_output_channel": "#lowtech-dev"
+    }
+}
+```
+
+## Considerations
+Interval durations outside these ranges will exceed the API limits of each service. Your API key will get rate limited and eventually blacklisted.
+
+Service | Minimum Hook Interval | Maximum Hook Interval
+--------|-----------------------|----------------------
+reddit|60|Unlimited
+twitter|60|Unlimited
+twitch|30|Unlimited
+
+Only one twitter account is polled at each interval. Hence, yhe more people you follow, the more delayed their tweets will be. 
+
+Future versions will use a different format for server and channel in config.json.
 
 ## Support
 I'll do the best I can to answer questions/issues. Feel free to contact me here or on Twitter [@Gtwy](https://twitter.com/Gtwy).
