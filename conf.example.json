@@ -1,5 +1,5 @@
 {
-    "_comment": "Below is an example of what API keys you need for my plugins.",
+    "_comment": "Below is an example of what API keys and settings are needed for all of my plugins.",
 
     "api_keys": {
         "reddit_news_client_id": "",
@@ -10,6 +10,29 @@
         "twitter_consumer_secret": "",
         "twitter_access_token": "",
         "twitter_access_secret": ""
+    },
+    "james-plugins": {
+        "reddit_news_subreddits": [
+                "netsec",
+                "ReverseEngineering",
+                "malware",
+                "blackhat"
+        ],
+        "reddit_news_output_server": "freenode",
+        "reddit_news_output_channel":"#lowtech-dev",
+        "follow_twitter_accounts": [
+                "Gtwy",
+                "hiredbeard",
+                "fauxicles"
+        ],
+        "follow_twitter_output_server": "freenode",
+        "follow_twitter_output_channel": "#lowtech-dev",
+        "follow_twitch_channels": [
+                "pcJIM",
+                "javagoogles"
+        ],
+        "follow_twitch_output_server": "freenode",
+        "follow_twitch_output_channel": "#lowtech-dev"
     }
 }
 
