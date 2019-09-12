@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #   James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
 #   This script watches Twitter feeds & posts the tweets to IRC
@@ -26,10 +28,10 @@ def load_api(bot):
     global twitter_api
 
     # Get API keys from config.json
-    consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key", None)
-    consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret", None)
-    oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token", None)
-    oauth_secret = bot.config.get("api_keys", {}).get("twitter_access_secret", None)
+    consumer_key = bot.config.get('api_keys', {}).get('twitter_consumer_key', None)
+    consumer_secret = bot.config.get('api_keys', {}).get('twitter_consumer_secret', None)
+    oauth_token = bot.config.get('api_keys', {}).get('twitter_access_token', None)
+    oauth_secret = bot.config.get('api_keys', {}).get('twitter_access_secret', None)
 
     if not all((consumer_key, consumer_secret, oauth_token, oauth_secret)):
         twitter_api = None
@@ -63,22 +65,22 @@ def load_cache(async, db):
 
 def _load_cache_db(db):
     query = db.execute(table.select())
-    return [(row["twitterid"], row["dateadded"]) for row in query]
+    return [(row['twitterid'], row['dateadded']) for row in query]
 
 @asyncio.coroutine
 @hook.periodic(60) # Minimum is 60
 def follow_twitter(bot, async, db):
     dateadded = datetime.now()
     if twitter_api is None:
-        print ("This command requires a Twitter API key.")
+        print ('This command requires a Twitter API key.')
     else:
-        twitter_users = bot.config.get("james-plugins", {}).get("follow_twitter_accounts", None)
+        twitter_users = bot.config.get('james-plugins', {}).get('follow_twitter_accounts', None)
         if not twitter_users:
             twitter_users = ['Gtwy', 'hiredbeard', 'fauxicles']
-        network = bot.config.get("james-plugins", {}).get("follow_twitter_output_server", None)
+        network = bot.config.get('james-plugins', {}).get('follow_twitter_output_server', None)
         if not network:
             network = 'freenode'
-        channel = bot.config.get("james-plugins", {}).get("follow_twitter_output_channel", None)
+        channel = bot.config.get('james-plugins', {}).get('follow_twitter_output_channel', None)
         if not channel:
             channel = '#lowtech-dev'
         # Stops plugin from crashing when network is offline
@@ -115,9 +117,9 @@ def follow_twitter(bot, async, db):
                         # Record that we posted this tweet
                         yield from add_entry(async, db, tweets[tweet_i].id_str, dateadded)
                         yield from load_cache(async, db)
-                
+
 		# Iterate to next user
                 if twitter_u == len(twitter_users)-1:
                 	twitter_u = 0
                 else:
-                	twitter_u += 1 
+                	twitter_u += 1
