@@ -1,5 +1,5 @@
 # CloudBot-Plugins
-James' plugins for [snoonetIRC's fork of CloudBot](https://github.com/snoonetIRC/CloudBot).
+James' plugins for [snoonetIRC's fork of CloudBot](https://github.com/snoonetIRC/CloudBot) (gonzobot branch.)
 
 Plugin | Status | Description | Prerequisites
 -------|--------|-------------|--------------
@@ -53,7 +53,7 @@ twitch|30|Unlimited
 
 Interval durations outside these ranges will exceed the API limits of each service resulting in your API key being rate limited and eventually blacklisted.
 
-Only one twitter account is polled at each interval. Hence, the more people you follow, the more delayed their tweets will be. 
+Only one twitter account is polled at each interval. Hence, the more people you follow, the more delayed their tweets will be.
 
 Future versions will use a different format for server and channel in config.json.
 
