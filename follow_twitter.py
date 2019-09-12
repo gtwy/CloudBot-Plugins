@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 #   James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
 #
 #   This script watches Twitter feeds & posts the tweets to IRC
