@@ -25,16 +25,16 @@ table = Table('reddit_news',
 @hook.on_start()
 def load_api(bot):
     global red_api
-    
+
     # Gets API keys from config.json
-    r_client_id = bot.config.get("api_keys", {}).get("reddit_news_client_id", None)
-    r_client_secret = bot.config.get("api_keys", {}).get("reddit_news_client_secret", None)
-    
+    r_client_id = bot.config.get('api_keys', {}).get('reddit_news_client_id', None)
+    r_client_secret = bot.config.get('api_keys', {}).get('reddit_news_client_secret', None)
+
     # Change if you want. Reddit requires a "valid user agent" and prohibits "spoofing"
-    r_user_agent = "linux:sh.blindfi.bot:v0.0.1 (by /u/PCGamerJim)"
+    r_user_agent = 'linux:sh.blindfi.bot:v0.0.1 (by /u/PCGamerJim)'
 
     # Get hook time from config.json
-    reddit_news_hook_time = bot.config.get("james-plugins", {}).get("reddit_news_hook_time", None)
+    reddit_news_hook_time = bot.config.get('james-plugins', {}).get('reddit_news_hook_time', None)
     if not reddit_news_hook_time:
         reddit_news_hook_time = 5*60
 
@@ -43,7 +43,7 @@ def load_api(bot):
         red_api = None
         return
     else:
-        red_api = praw.Reddit(client_id=r_client_id, client_secret=r_client_secret, user_agent=r_user_agent) 
+        red_api = praw.Reddit(client_id=r_client_id, client_secret=r_client_secret, user_agent=r_user_agent)
 
 @asyncio.coroutine
 def add_entry(async, db, redditid, subreddit, dateadded):
@@ -66,22 +66,22 @@ def load_cache(async, db):
 
 def _load_cache_db(db):
     query = db.execute(table.select())
-    return [(row["redditid"], row["subreddit"], row["dateadded"]) for row in query]
+    return [(row['redditid'], row['subreddit'], row['dateadded']) for row in query]
 
 @asyncio.coroutine
 @hook.periodic(6 * 60 * 60) # Minimum is 60
 def reddit_news(bot, async, db):
     dateadded = datetime.now()
     if red_api is None:
-        print ("This command requires a reddit API key.")
+        print ('This command requires a reddit API key.')
     else:
-        subreddits = bot.config.get("james-plugins", {}).get("reddit_news_subreddits", None)
+        subreddits = bot.config.get('james-plugins', {}).get('reddit_news_subreddits', None)
         if not subreddits:
             subreddits = ['netsec', 'ReverseEngineering', 'malware', 'blackhat', 'pwned']
-        network = bot.config.get("james-plugins", {}).get("reddit_news_output_server", None)
+        network = bot.config.get('james-plugins', {}).get('reddit_news_output_server', None)
         if not network:
             network = 'freenode'
-        channel = bot.config.get("james-plugins", {}).get("reddit_news_output_channel", None)
+        channel = bot.config.get('james-plugins', {}).get('reddit_news_output_channel', None)
         if not channel:
             channel = '#lowtech-dev'
         if network in bot.connections:
