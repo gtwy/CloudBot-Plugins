@@ -62,7 +62,7 @@ async def load_cache(async_call, db):
     for redditid, subreddit, dateadded in (await async_call(_load_cache_db, db)):
         reddit_news_cache.append((redditid, subreddit, dateadded))
 
-async def _load_cache_db(db):
+def _load_cache_db(db):
     query = db.execute(table.select())
     return [(row['redditid'], row['subreddit'], row['dateadded']) for row in query]
 
