@@ -8,7 +8,6 @@
 
 from datetime import datetime
 import time
-import asyncio
 from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
 from cloudbot import hook
 from cloudbot.util import database
@@ -21,8 +20,16 @@ table = Table('follow_twitter',
         PrimaryKeyConstraint('twitterid','dateadded')
 )
 
+async def add_entry(async_call, db, twitterid, dateadded):
+    query = table.insert().values(
+            twitterid=twitterid,
+            dateadded=dateadded
+    )
+    await async_call(db.execute, query)
+    await async_call(db.commit)
+
 @hook.on_start()
-def load_api(bot):
+async def load_api(bot):
     global twitter_api
 
     # Get API keys from config.json
@@ -42,32 +49,20 @@ def load_api(bot):
                 access_token_secret=oauth_secret
         )
 
-
-@asyncio.coroutine
-def add_entry(async, db, twitterid, dateadded):
-    query = table.insert().values(
-            twitterid=twitterid,
-            dateadded=dateadded
-    )
-    yield from async(db.execute, query)
-    yield from async(db.commit)
-
-@asyncio.coroutine
 @hook.on_start()
-def load_cache(async, db):
+async def load_cache(async_call, db):
     global follow_twitter_cache
     follow_twitter_cache = []
 
-    for twitterid, dateadded in (yield from async(_load_cache_db, db)):
+    for twitterid, dateadded in (await async_call(_load_cache_db, db)):
         follow_twitter_cache.append((twitterid, dateadded))
 
 def _load_cache_db(db):
     query = db.execute(table.select())
     return [(row['twitterid'], row['dateadded']) for row in query]
 
-@asyncio.coroutine
 @hook.periodic(60) # Minimum is 60
-def follow_twitter(bot, async, db):
+async def follow_twitter(bot, async_call, db):
     dateadded = datetime.now()
     if twitter_api is None:
         print ('This command requires a Twitter API key.')
@@ -113,8 +108,8 @@ def follow_twitter(bot, async, db):
                         # Send the message to IRC
                         conn.message(channel, out)
                         # Record that we posted this tweet
-                        yield from add_entry(async, db, tweets[tweet_i].id_str, dateadded)
-                        yield from load_cache(async, db)
+                        await add_entry(async_call, db, tweets[tweet_i].id_str, dateadded)
+                        await load_cache(async_call, db)
 
 		# Iterate to next user
                 if twitter_u == len(twitter_users)-1:
