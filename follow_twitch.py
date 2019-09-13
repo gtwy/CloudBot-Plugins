@@ -10,7 +10,7 @@ from cloudbot import hook
 from twitch import TwitchClient
 
 @hook.on_start()
-def load_api(bot):
+async def load_api(bot):
     global twitch_api
 
     # Get API keys from config.json
@@ -27,7 +27,7 @@ def load_api(bot):
         twitch_api = TwitchClient(twitch_client_id, twitch_client_secret)
 
 @hook.periodic(1*30) # Minimum is 30
-def follow_twitter(bot, async, db):
+async def follow_twitch(bot, async_call, db):
     if twitch_api is None:
         print ('This command requires a Twitch API key.')
     else:
