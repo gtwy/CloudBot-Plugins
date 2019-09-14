@@ -34,6 +34,7 @@ async def nextlaunch(text, message):
    except Exception:
       message("Something went wrong, either you entered an invalid search string or the API is down.")
       raise
+
    # First result
    lch = lchlist[0]
 
@@ -49,4 +50,6 @@ async def nextlaunch(text, message):
       lchout += 'TBD/NET ' + str(lch.net)
    else:
       lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
+
+   # Output
    message(lchout)
