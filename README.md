@@ -3,6 +3,7 @@ James' plugins for [snoonetIRC's fork of CloudBot](https://github.com/snoonetIRC
 
 Plugin | Status | Description | Prerequisites
 -------|--------|-------------|--------------
+next launch|Development|Responds with next rocket launch|[launchlibrary](https://pypi.org/project/python-launch-library/)
 reddit news|Stable|Follows specified subreddits & echo when top post changes on IRC|[PRAW](https://praw.readthedocs.io)
 follow twitter|Stable|Follow specified accounts & echo their tweets on IRC|[python-twitter](https://github.com/bear/python-twitter)
 follow twitch|Stable|Follow specified channels & announce when they go live on IRC|[python-twitch-client](https://github.com/tsifrer/python-twitch-client)
