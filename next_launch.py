@@ -1,3 +1,15 @@
+#   James' CloudBot Plugins      https://github.com/gtwy/CloudBot-Plugins
+#
+#   Responds to commands "nextlaunch" / "nl" with the next rocket launch.
+#   Add a search term to search. E.g. "nl falcon 9"
+#
+#   Future versions of this script will automatically broadcast if a launch is imminent
+#
+#   Requirements:
+#      * launchlibrary API      https://pypi.org/project/python-launch-library/
+
+from cloudbot import hook
+from cloudbot.bot import bot
 from datetime import datetime, timezone
 import launchlibrary as ll
 import re
@@ -7,21 +19,20 @@ async def ll_api():
    global llapi
 
    # Initialize Launch Library API
-   api = ll.Api(retries=10)
+   llapi = ll.Api(retries=10)
 
 
-@hook.command('nextlaunch', 'name', singlethread=True)
-def nextlaunch(text='', reply):
-   """<string> - Prints next launch matching string"""
+@hook.command('nextlaunch', 'nl')
+async def nextlaunch(text, message):
    lchsearch = text.strip()
    try:
       # Pull a list of search results. (If no search term was entered, pull the next launch.)
-      if len(lchsearch) > 0:
-         lchlist = list(filter(lambda x: lchsearch.lower() in x.name.lower(), ll.Launch.fetch(api, next=300)))
+      if not lchsearch:
+         lchlist = ll.Launch.fetch(llapi, next=1)
       else:
-         lchlist = ll.Launch.fetch(api, next=1)
+         lchlist = list(filter(lambda x: lchsearch.lower() in x.name.lower(), ll.Launch.fetch(llapi, next=300)))
    except Exception:
-      reply("Something went wrong, either you entered an invalid search string or the API is down.")
+      message("Something went wrong, either you entered an invalid search string or the API is down.")
       raise
    # First result
    lch = lchlist[0]
@@ -37,5 +48,5 @@ def nextlaunch(text='', reply):
    if lch.tbddate==1 or lch.tbdtime==1:
       lchout += 'TBD/NET ' + str(lch.net)
    else:
-      lchout += 'NET ' + str(nl.net) + ' - T-' + str(nl.net - datetime.now(timezone.utc))
-   return lchout
+      lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
+   message(lchout)
