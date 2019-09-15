@@ -66,7 +66,7 @@ def _load_cache_db(db):
     query = db.execute(table.select())
     return [(row['redditid'], row['subreddit'], row['dateadded']) for row in query]
 
-@hook.periodic(6 * 60 * 60) # Minimum is 60
+@hook.periodic(2 * 60) # Minimum is 60
 async def reddit_news(bot, async_call, db):
     dateadded = datetime.now()
     if red_api is None:
