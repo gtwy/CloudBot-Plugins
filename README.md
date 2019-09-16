@@ -28,6 +28,19 @@ Copy plugin .py files into CloudBot's plugins directory.
 
 Edit CloudBot's config.json file. Add read-only API keys for the services you intend to use.
 
+```
+    "api_keys": {
+        "reddit_news_client_id": "barfoobarfoo",
+        "reddit_news_client_secret": "asdfasdfasdfasdfasdfasdf",
+        "twitch_client_id": "barfoobarfoobarfoo",
+        "twitch_client_secret": "asdfasdfasdfasdfasdfasdfasdf",
+        "twitter_consumer_key": "foobarfoobarfoobarfoo",
+        "twitter_consumer_secret": "asdfasdfasdfasdfasdfasdfasdfasdfadsfadsfdsfsd",
+        "twitter_access_token": "wtfmorefoobarfoobarfoobar",
+        "twitter_access_secret": "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
+    },
+```
+
 At the bottom of your config, add a section named "james-plugins." Don't forget to add a comma after closing the logging block. It should look something like this. Adjust settings accordingly.
 
 ```
