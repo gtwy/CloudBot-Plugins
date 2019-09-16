@@ -8,6 +8,19 @@ follow twitter|Stable|Follow specified accounts & echo their tweets on IRC|[pyth
 next launch|Devel|Responds with next rocket launch|[launchlibrary](https://pypi.org/project/python-launch-library/)
 reddit news|Stable|Follows specified subreddits & echo when top post changes on IRC|[PRAW](https://praw.readthedocs.io)
 
+## About
+I am really impressed with the MaxQ bot in #SpaceX on EsperNet. The bot provides a feed to the channel with 1). tweets from people related to space, such as Elon Musk and NASA, 2). when the top post on reddit's /r/spacex changes, 3). information about the next rocket launch.
+
+After spending some time there, I decided I wanted to recreate MaxQ's functionality for another channel on Freenode. When I first inquired about the MaxQ bot, in 2017, the source code was not public. So, I started working on my own bot that would behave similarly.
+
+My first attempt was a bot from scratch. While I did manage to make some progress, it was too difficult and clunky for other people to use. It soon became obvious that writing plugins for an existing bot platform would be superior to writing my own from scratch.
+
+My initial belief was that periodic hooks were the key to emulating the MaxQ bot. I tried to find a popular bot ecosystem that supported periodic hooks. I tested a variety of bots, but none of the projects currently maintained had periodic hook support, including the original CloudBot project. After nearly giving up, I found a fork of [CloudBot by snoonetIRC](https://github.com/snoonetIRC/CloudBot). It is frequently updated, maintained, and best of all, written with periodic hook support.
+
+Today, the [MaxQ bot's source code](https://github.com/jclishman/maxq-irc-bot) is public and available for you to use. It's a from-scratch bot that lacks the plug-and-play usability of CloudBot. No source code from that project has been used on this project. (In fact, I only looked through his code for the first time quite recently.)
+
+Because I want to do things above and beyond the limited features of MaxQ, including utilize other CloudBot plugins, my plugin project will continue to be updated and maintained. Thanks for checking it out!
+
 ## How to use
 Install all necessary prerequisites linked in the table above.
 
