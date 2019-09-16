@@ -19,7 +19,7 @@ My initial belief was that periodic hooks were the key to emulating the MaxQ bot
 
 Today, the [MaxQ bot's source code](https://github.com/jclishman/maxq-irc-bot) is public and available for you to use. It's a from-scratch bot that lacks the plug-and-play usability of CloudBot. No source code from that project has been used on this project. (In fact, I only looked through his code for the first time quite recently.)
 
-Because I want to do things above and beyond the limited features of MaxQ, including utilize other CloudBot plugins, my plugin project will continue to be updated and maintained. Thanks for checking it out!
+Because I want to do things above and beyond the limited features of MaxQ, including utilize other CloudBot plugins, my plugin project will continue to be updated and maintained. Thanks for taking a look!
 
 ## How to use
 Install all necessary prerequisites linked in the table above.
