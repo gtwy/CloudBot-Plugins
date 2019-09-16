@@ -82,7 +82,7 @@ Interval durations outside these ranges will exceed the API limits of each servi
 
 Only one twitter account is polled at each interval. Hence, the more people you follow, the more delayed their tweets will be.
 
-Future versions will use a different format for server and channel in config.json.
+Future versions will use a [different format for server and channel](https://github.com/gtwy/CloudBot-Plugins/issues/9) in config.json.
 
 ## Support
 I'll do the best I can to answer questions/issues. Feel free to contact me here or on Twitter [@Gtwy](https://twitter.com/Gtwy).
