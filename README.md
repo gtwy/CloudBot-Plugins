@@ -44,9 +44,8 @@ git clone https://github.com/gtwy/CloudBot-Plugins.git
 cd CloudBot-Plugins
 ```
 
-Manually install the python dependencies one at a time using the links in the table above.
 
-Or, if you intend to use all of the plugins, install all of the python dependencies at once using using `pip` with the following command from inside my Cloudbot-Plugins directory:
+If you intend to use all of my plugins, install the python dependencies all at once using using `pip` with the following command from inside my Cloudbot-Plugins directory:
 
 ```
 pip install -r requirements.txt
@@ -60,7 +59,7 @@ Finally, copy the plugins to CloudBot's plugin directory:
 cp *.py ../CloudBot/plugins
 ```
 
-(Assuming that the CloudBot clone directory shares the same parent directory with the CloudBot-Plugins clone directory.)
+(Assuming that my CloudBot-Plugins clone directory shares the same parent directory with the CloudBot clone directory.)
 
 ## Configuration
 
