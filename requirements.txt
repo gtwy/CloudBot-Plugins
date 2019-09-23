@@ -1,0 +1,4 @@
+python-twitter>=3.5
+python-twitch-client==0.6.0
+python-launch-library==0.6
+praw>=6.4
