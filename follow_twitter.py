@@ -47,7 +47,8 @@ async def load_api(bot):
         twitter_api = twitter.Api(consumer_key=consumer_key,
                 consumer_secret=consumer_secret,
                 access_token_key=oauth_token,
-                access_token_secret=oauth_secret
+                access_token_secret=oauth_secret,
+                tweet_mode='extended'
         )
 
 @hook.on_start()
