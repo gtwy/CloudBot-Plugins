@@ -104,10 +104,9 @@ async def follow_twitter(bot, async_call, db):
                             submitted = True
                     if not submitted:
                         # Build the IRC message
-                        text = tweets[tweet_i].text.replace('\n',' ').replace('  ',' ').rstrip()
+                        text = html.unescape(tweets[tweet_i].full_text.replace('\n',' ').replace('  ',' ').rstrip())
                         url = u'https://twitter.com/{}/status/{}'.format(twitter_user,tweets[tweet_i].id_str)
-                        escapedtext = html.unescape(text)
-                        out = u'{}{}  ({})'.format(intro,escapedtext,url)
+                        out = u'{}{}  ({})'.format(intro,text,url)
                         # Send the message to IRC
                         conn.message(channel, out)
                         # Record that we posted this tweet
