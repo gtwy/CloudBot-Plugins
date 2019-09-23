@@ -21,6 +21,19 @@ Today, the [MaxQ bot's source code](https://github.com/jclishman/maxq-irc-bot) i
 
 Because I want to do things above and beyond the limited features of MaxQ, including utilize other CloudBot plugins, my plugin project will continue to be updated and maintained. Thanks for taking a look!
 
+## Example Output
+An example of what you can expect on your IRC channel (alt-l is the bot.)
+
+```
+00:34:21 alt-l | [Twitter] @Gtwy wrote: Does anybody seriously think the new 3-camera iPhone is
+               | aesthetically pleasing?  (https://twitter.com/Gtwy/status/1175266879004237824)
+13:09:45 alt-l | [Reddit] Trending on /r/netsec: GitHub - secrary/Andromeda: Andromeda - Interactive
+               | Reverse Engineering Tool for Android Applications (https://redd.it/d7t41m)
+19:14:28    wx | %nl
+19:14:29 alt-l | H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan -
+               | https://youtu.be/EqGcvxZRIzI - NET 2019-09-24 16:05:05+00:00 - T-16:50:36.011158
+```
+
 ## How to use
 Install all necessary prerequisites linked in the table above.
 
@@ -30,14 +43,14 @@ Edit CloudBot's config.json file. Add read-only API keys for the services you in
 
 ```
     "api_keys": {
-        "reddit_news_client_id": "barfoobarfoo",
-        "reddit_news_client_secret": "asdfasdfasdfasdfasdfasdf",
-        "twitch_client_id": "barfoobarfoobarfoo",
-        "twitch_client_secret": "asdfasdfasdfasdfasdfasdfasdf",
-        "twitter_consumer_key": "foobarfoobarfoobarfoo",
-        "twitter_consumer_secret": "asdfasdfasdfasdfasdfasdfasdfasdfadsfadsfdsfsd",
-        "twitter_access_token": "wtfmorefoobarfoobarfoobar",
-        "twitter_access_secret": "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
+        "reddit_news_client_id": "",
+        "reddit_news_client_secret": "",
+        "twitch_client_id": "",
+        "twitch_client_secret": "",
+        "twitter_consumer_key": "",
+        "twitter_consumer_secret": "",
+        "twitter_access_token": "",
+        "twitter_access_secret": ""
     },
 ```
 
