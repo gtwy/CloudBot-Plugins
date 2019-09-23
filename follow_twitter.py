@@ -8,6 +8,7 @@
 
 from datetime import datetime
 import time
+import html
 from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
 from cloudbot import hook
 from cloudbot.util import database
@@ -104,7 +105,8 @@ async def follow_twitter(bot, async_call, db):
                         # Build the IRC message
                         text = tweets[tweet_i].text.replace('\n',' ').replace('  ',' ').rstrip()
                         url = u'https://twitter.com/{}/status/{}'.format(twitter_user,tweets[tweet_i].id_str)
-                        out = u'{}{}  ({})'.format(intro,text,url)
+                        escapedtext = html.unescape(text)
+                        out = u'{}{}  ({})'.format(intro,escapedtext,url)
                         # Send the message to IRC
                         conn.message(channel, out)
                         # Record that we posted this tweet
