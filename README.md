@@ -9,9 +9,9 @@ next launch|Devel|Responds with next rocket launch|[launchlibrary](https://pypi.
 reddit news|Stable|Follows specified subreddits & echo when top post changes on IRC|[PRAW](https://praw.readthedocs.io)
 
 ## About
-I am really impressed with the MaxQ bot in #SpaceX on EsperNet. The bot provides a feed to the channel with 1). tweets from people related to space, such as Elon Musk and NASA, 2). when the top post on reddit's /r/spacex changes, 3). information about the next rocket launch.
+My cloudbot plugins will enable your bot to follow twitter users, twitch users, and reddit subreddits of your choosing, echoing new posts to your IRC channel in real time. It also is a useful tool for tracking future rocket launches.
 
-After spending some time there, I decided I wanted to recreate MaxQ's functionality for another channel on Freenode. When I first inquired about the MaxQ bot in 2017, the source code was not public. So, I started working on my own bot that would behave similarly.
+This project was inspired by the MaxQ bot in #SpaceX on EsperNet. In 2017, I decided I wanted to recreate MaxQ's functionality for another channel on Freenode. When I first inquired about the MaxQ bot, its source code was not yet public. So, I started working on my own bot that would behave similarly.
 
 My first attempt was a bot from scratch. While I did manage to make some progress, it was too difficult and clunky for other people to use. It soon became obvious that writing plugins for an existing bot platform would be superior to writing my own from scratch.
 
