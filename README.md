@@ -34,12 +34,37 @@ An example of what you can expect on your IRC channel (alt-l is the bot.)
                | https://youtu.be/EqGcvxZRIzI - NET 2019-09-24 16:05:05+00:00 - T-16:50:36.011158
 ```
 
-## How to use
-Install all necessary prerequisites linked in the table above.
+## How to install
+First, clone and configure the [snoonetIRC fork of Cloudbot](https://github.com/snoonetIRC/CloudBot). Verify that the bot joins the correct channels and that there are no errors in the logs.
 
-Copy plugin .py files into CloudBot's plugins directory.
+If CloudBot is working correctly, clone my plugins with the following command. Do not run this command from inside the CloudBot directory nor a subdirectory of the Cloudbot directory. I recommend running the command from the parent directory of the CloudBot directory.
 
-Edit CloudBot's config.json file. Add read-only API keys for the services you intend to use.
+```
+git clone https://github.com/gtwy/CloudBot-Plugins.git
+cd CloudBot-Plugins
+```
+
+Manually install the python dependencies one at a time using the links in the table above.
+
+Or, if you intend to use all of the plugins, install all of the python dependencies at once using using `pip` with the following command from inside my Cloudbot-Plugins directory:
+
+```
+pip install -r requirements.txt
+```
+
+(If you get an error, try using `pip3` instead of `pip`).
+
+Finally, copy the plugins to CloudBot's plugin directory:
+
+```
+cp *.py ../CloudBot/plugins
+```
+
+(Assuming that the CloudBot clone directory shares the same parent directory with the CloudBot-Plugins clone directory.)
+
+## Configuration
+
+Edit CloudBot's config.json file. Add API keys for these services in the existing "api_keys" block.
 
 ```
     "api_keys": {
@@ -54,7 +79,7 @@ Edit CloudBot's config.json file. Add read-only API keys for the services you in
     },
 ```
 
-At the bottom of your config, add a section named "james-plugins." Don't forget to add a comma after closing the logging block. It should look something like this. Adjust settings accordingly.
+Just before the very end of config.json, add a block named "james-plugins." Don't forget to add a comma after closing the logging block. The bottom of config.json should look something like this when you are finished.
 
 ```
     },
@@ -84,6 +109,8 @@ At the bottom of your config, add a section named "james-plugins." Don't forget 
 }
 ```
 
+Future versions will use a [different format for server and channel](https://github.com/gtwy/CloudBot-Plugins/issues/9) in config.json.
+
 ## Considerations
 Service | Minimum Hook Interval | Maximum Hook Interval
 --------|-----------------------|----------------------
@@ -95,7 +122,6 @@ Interval durations outside these ranges will exceed the API limits of each servi
 
 Only one twitter account is polled at each interval. Hence, the more people you follow, the more delayed their tweets will be.
 
-Future versions will use a [different format for server and channel](https://github.com/gtwy/CloudBot-Plugins/issues/9) in config.json.
 
 ## Support
 I'll do the best I can to answer questions/issues. Feel free to contact me here or on Twitter [@Gtwy](https://twitter.com/Gtwy).
