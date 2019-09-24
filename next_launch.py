@@ -13,7 +13,8 @@ from cloudbot.bot import bot
 from datetime import datetime, timezone, timedelta
 import launchlibrary as ll
 import re
-from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
+from sqlalchemy import Table, Column, String, DateTime, Integer, Boolean
+from cloudbot.util import database
 
 
 # Sqlachemy tables and functions
@@ -21,7 +22,7 @@ table = Table('next_launch',
       database.metadata,
       Column('launchid', Integer, primary_key=True),
       Column('netdate', DateTime),
-      Column('notifyt24', Boolean, default=False)
+      Column('notifyt24', Boolean, default=False),
       Column('notifyt01', Boolean, default=False)
       )
 
@@ -100,18 +101,6 @@ def getLaunches(lchsearch=''):
       raise
    return lchlist;
 
-# Function to make sure there were were results
-def launchCheck(lchlist, lchsearch):
-   if len(lchlist) > 0:
-      lchout = launchOut(lchlist[0])
-   else:
-      if not lchsearch:
-         lchout = 'Something went wrong. Maybe the Launch Library API is down?'
-      else:
-         lchout = 'No future launches found matching search term: ' + lchsearch
-
-   return lchout;
-
 # Function to build the output string
 def launchOut(lch):
    # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
@@ -126,6 +115,18 @@ def launchOut(lch):
       lchout += 'TBD/NET ' + str(lch.net)
    else:
       lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
+
+   return lchout;
+
+# Function to make sure there were were results
+def launchCheck(lchlist, lchsearch=''):
+   if len(lchlist) > 0:
+      lchout = launchOut(lchlist[0])
+   else:
+      if not lchsearch:
+         lchout = 'Something went wrong. Maybe the Launch Library API is down?'
+      else:
+         lchout = 'No future launches found matching search term: ' + lchsearch
 
    return lchout;
 
@@ -213,7 +214,7 @@ async def nextlaunch(text, message):
    lchlist = getLaunches(lchsearch)
 
    # Are there any results?
-   msg = launchCheck(lchsearch, lchlist)
+   msg = launchCheck(lchlist, lchsearch)
 
    # Output
    message(msg)
