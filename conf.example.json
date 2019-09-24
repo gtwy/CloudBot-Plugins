@@ -32,7 +32,9 @@
                 "javagoogles"
         ],
         "follow_twitch_output_server": "freenode",
-        "follow_twitch_output_channel": "#lowtech-dev"
+        "follow_twitch_output_channel": "#lowtech-dev",
+        "launch_output_server": "freenode",
+        "launch_output_channel": "#lowtech-dev"
     }
 }
 

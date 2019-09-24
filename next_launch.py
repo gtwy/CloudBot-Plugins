@@ -10,10 +10,62 @@
 
 from cloudbot import hook
 from cloudbot.bot import bot
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import launchlibrary as ll
 import re
+from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
 
+
+# Sqlachemy tables and functions
+table = Table('next_launch',
+      database.metadata,
+      Column('launchid', Integer, primary_key=True),
+      Column('netdate', DateTime),
+      Column('notifyt24', Boolean, default=False)
+      Column('notifyt01', Boolean, default=False)
+      )
+
+async def add_entry(async_call, db, launchid, netdate):
+   query = table.insert().values(
+         launchid=launchid,
+         netdate=netdate
+         )
+   await async_call(db.execute, query)
+   await async_call(db.commit)
+
+async def update_entry(async_call, db, launchid, netdate):
+   query = table.update() \
+         .where(table.c.launchid == launchid) \
+         .values(netdate=netdate)
+
+   await async_call(db.execute, query)
+   await async_call(db.commit)
+
+async def notify_entry24(async_call, db, launchid, switch=True):
+   query = table.update() \
+         .where(table.c.launchid == launchid) \
+         .values(notifyt24=switch)
+
+   await async_call(db.execute, query)
+   await async_call(db.commit)
+
+async def notify_entry01(async_call, db, launchid, switch=True):
+   query = table.update() \
+         .where(table.c.launchid == launchid) \
+         .values(notifyt01=switch)
+
+   await async_call(db.execute, query)
+   await async_call(db.commit)
+
+async def del_entries(async_call, db):
+   query = table.delete() \
+         .where(table.c.netdate > (datetime.now(timezone.utc) + timedelta(hours=2)))
+
+   await async_call(db.execute, query)
+   await async_call(db.commit)
+
+
+# Initialize API
 @hook.on_start()
 async def ll_api():
    global llapi
@@ -21,45 +73,147 @@ async def ll_api():
    # Initialize Launch Library API
    llapi = ll.Api(retries=10)
 
-def launchOut(thissearch, thislist):
-   if len(thislist) > 0:
-      lch = thislist[0]
+# Load cache from sqlachemy
+@hook.on_start()
+async def load_cache(async_call, db):
+   global ll_cache
+   ll_cache = []
 
-      # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
-      lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
+   for launchid, netdate, notifyt24, notifyt01 in (await async_call(_load_cache_db, db)):
+      ll_cache.append((launchid, netdate, notifyt24, notifyt01))
 
-      # If a video feed exists, append to output
-      if len(lch.vid_urls) > 0:
-         lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' - '
+def _load_cache_db(db):
+    query = db.execute(table.select())
+    return [(row['launchid'], row['netdate'], row['notifyt24'], row['notifyt01']) for row in query]
 
-      # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
-      if lch.tbddate==1 or lch.tbdtime==1:
-         lchout += 'TBD/NET ' + str(lch.net)
-      else:
-         lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
-   else:
-      if not thissearch:
-         lchout = 'Something went wrong. Maybe the Launch Library API is down?'
-      else:
-         lchout = 'No future launches found matching search term: ' + thissearch
-
-   return lchout;
-
-@hook.command('nextlaunch', 'nl')
-async def nextlaunch(text, message):
-   lchsearch = text.strip()
+# Function to download list of launches
+def getLaunches(lchsearch=''):
    # Download list of search results.
    try:
       if not lchsearch: # No search term entered, just pull the next launch
-         lchlist = ll.Launch.fetch(llapi, next=1)
+         lchlist = ll.Launch.fetch(llapi, next=25)
       else: # Search term entered. Download list of next 300 launches and then filter with search term
          lchlist = list(filter(lambda x: lchsearch.lower() in x.name.lower(), ll.Launch.fetch(llapi, next=300)))
    except Exception:
-      message("Something went wrong, either you entered an invalid search string or the API is down.")
+      print ('Something went wrong, either you entered an invalid search string or the API is down.')
+      lchlist = []
       raise
+   return lchlist;
+
+# Function to make sure there were were results
+def launchCheck(lchlist, lchsearch):
+   if len(lchlist) > 0:
+      lchout = launchOut(lchlist[0])
+   else:
+      if not lchsearch:
+         lchout = 'Something went wrong. Maybe the Launch Library API is down?'
+      else:
+         lchout = 'No future launches found matching search term: ' + lchsearch
+
+   return lchout;
+
+# Function to build the output string
+def launchOut(lch):
+   # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
+   lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
+
+   # If a video feed exists, append to output
+   if len(lch.vid_urls) > 0:
+      lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' - '
+
+   # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
+   if lch.tbddate==1 or lch.tbdtime==1:
+      lchout += 'TBD/NET ' + str(lch.net)
+   else:
+      lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
+
+   return lchout;
+
+# Function to send messages to the channel
+def sendLaunch(bot, async_call, db, lchout):
+   network = bot.config.get('james-plugins', {}).get('launch_output_server', None)
+   if not network:
+      network = 'freenode'
+   channel = bot.config.get('james-plugins', {}).get('launch_output_channel', None)
+   if not channel:
+      channel = '#lowtech-dev'
+   if network in bot.connections:
+      conn = bot.connections[network]
+      if conn.ready:
+         out = ''
+         conn.message(channel, lchout)
+
+# Watch for future launches and send to channel
+@hook.periodic(60 * 5)
+async def launchlibrarybot(bot, async_call, db):
+
+   # Delete old launches
+   await del_entries(async_call, db)
+   await load_cache(db)
+
+   # Compares launch library with local database and acts accordingly
+   lchlist = getLaunches()
+   if len(lchlist) > 0:
+      for lch in lchlist:
+         exists = False
+         datesame = False
+         didnotify24 = False
+         didnotify01 = False
+         for result in ll_cache:
+            cacheid, cachedate, notifyt24, notifyt01 = result
+
+            # Get applicable record and pass variables
+            if lch.id == cacheid:
+               exists = True
+               if lch.net == cachedate:
+                  datesame = True
+               didnotify24 = notifyt24
+               didnotify01 = notifyt01
+
+         if not exists: # Add new entry to database
+            await add_entry(async_call, db, lch.id, lch.net)
+            await load_cache(db)
+
+         if not datesame: # NET date changed. Update database
+            await update_entry(async_call, db, lch.id, lch.net)
+            await load_cache(db)
+
+            # Send message to the channel that the date has changed
+            sendLaunch(bot, async_call, db, launchOut(lch))
+
+            # New date is more than 30 hours away, reset T-24 hr notification
+            if lch.net > (datetime.now(timezone.utc) + (timedelta(hours=30))):
+               await notify_entry24(async_call, db, lch.id, False)
+               await load_cache(db)
+
+            # Reset T-1 hr clock regardless
+            await notify_entry01(async_call, db, lch.id, False)
+            await load_cache(db)
+
+         if didnotify24 == False and lch.net < (datetime.now(timezone.utc) + (timedelta(hours=24))):  # Less than T-24 hrs until launch
+            await notify_entry24(async_call, db, lch.id)
+            await load_cache(db)
+
+            # Send a message to the channel that T-24 hrs til launch
+            sendLaunch(bot, async_call, db, launchOut(lch))
+
+         if didnotify01 == False and lch.net < (datetime.now(timezone.utc) + (timedelta(hours=1))):   # Less than T-1 hr until launch
+            await notify_entry01(async_call, db, lch.id)
+            await load_cache(db)
+
+            # Send a message to the channel that T-1 hr til launch
+            sendLaunch(bot, async_call, db, launchOut(lch))
+
+# Respond to manual queries with the "nl" or "nextlaunch" command
+@hook.command('nextlaunch', 'nl')
+async def nextlaunch(text, message):
+   lchsearch = text.strip()
+
+   # Get launches
+   lchlist = getLaunches(lchsearch)
 
    # Are there any results?
-   msg = launchOut(lchsearch, lchlist)
+   msg = launchCheck(lchsearch, lchlist)
 
    # Output
    message(msg)
