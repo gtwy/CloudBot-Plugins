@@ -21,6 +21,29 @@ async def ll_api():
    # Initialize Launch Library API
    llapi = ll.Api(retries=10)
 
+def launchOut(thissearch, thislist):
+   if len(thislist) > 0:
+      lch = thislist[0]
+
+      # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
+      lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
+
+      # If a video feed exists, append to output
+      if len(lch.vid_urls) > 0:
+         lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' - '
+
+      # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
+      if lch.tbddate==1 or lch.tbdtime==1:
+         lchout += 'TBD/NET ' + str(lch.net)
+      else:
+         lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
+   else:
+      if not thissearch:
+         lchout = 'Something went wrong. Maybe the Launch Library API is down?'
+      else:
+         lchout = 'No future launches found matching search term: ' + thissearch
+
+   return lchout;
 
 @hook.command('nextlaunch', 'nl')
 async def nextlaunch(text, message):
@@ -36,26 +59,7 @@ async def nextlaunch(text, message):
       raise
 
    # Are there any results?
-   if len(lchlist) > 0:
-      lch = lchlist[0]
-
-      # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
-      lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
-
-      # If a video feed exists, append to output
-      if len(lch.vid_urls) > 0:
-         lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' - '
-
-      # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
-      if lch.tbddate==1 or lch.tbdtime==1:
-         lchout += 'TBD/NET ' + str(lch.net)
-      else:
-         lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
-   else:
-      if not lchsearch:
-         lchout = 'Something went wrong. Maybe the Launch Library API is down?'
-      else:
-         lchout = 'No future launches found matching search term: ' + lchsearch
+   msg = launchOut(lchsearch, lchlist)
 
    # Output
-   message(lchout)
+   message(msg)
