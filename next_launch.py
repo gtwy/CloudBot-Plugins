@@ -150,7 +150,7 @@ async def launchlibrarybot(bot, async_call, db):
 
    # Delete old launches
    await del_entries(async_call, db)
-   await load_cache(db)
+   await load_cache(async_call, db)
 
    # Compares launch library with local database and acts accordingly
    lchlist = getLaunches()
@@ -173,11 +173,11 @@ async def launchlibrarybot(bot, async_call, db):
 
          if not exists: # Add new entry to database
             await add_entry(async_call, db, lch.id, lch.net)
-            await load_cache(db)
+            await load_cache(async_call, db)
 
          if not datesame: # NET date changed. Update database
             await update_entry(async_call, db, lch.id, lch.net)
-            await load_cache(db)
+            await load_cache(async_call, db)
 
             # Send message to the channel that the date has changed
             sendLaunch(bot, async_call, db, launchOut(lch))
@@ -185,22 +185,22 @@ async def launchlibrarybot(bot, async_call, db):
             # New date is more than 30 hours away, reset T-24 hr notification
             if lch.net > (datetime.now(timezone.utc) + (timedelta(hours=30))):
                await notify_entry24(async_call, db, lch.id, False)
-               await load_cache(db)
+               await load_cache(async_call, db)
 
             # Reset T-1 hr clock regardless
             await notify_entry01(async_call, db, lch.id, False)
-            await load_cache(db)
+            await load_cache(async_call, db)
 
          if didnotify24 == False and lch.net < (datetime.now(timezone.utc) + (timedelta(hours=24))):  # Less than T-24 hrs until launch
             await notify_entry24(async_call, db, lch.id)
-            await load_cache(db)
+            await load_cache(async_call, db)
 
             # Send a message to the channel that T-24 hrs til launch
             sendLaunch(bot, async_call, db, launchOut(lch))
 
          if didnotify01 == False and lch.net < (datetime.now(timezone.utc) + (timedelta(hours=1))):   # Less than T-1 hr until launch
             await notify_entry01(async_call, db, lch.id)
-            await load_cache(db)
+            await load_cache(async_call, db)
 
             # Send a message to the channel that T-1 hr til launch
             sendLaunch(bot, async_call, db, launchOut(lch))
