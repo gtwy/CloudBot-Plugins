@@ -103,7 +103,9 @@ Just before the very end of config.json, add a block named "james-plugins." Don'
 		"javagoogles"
 	],
 	"follow_twitch_output_server": "freenode",
-	"follow_twitch_output_channel": "#lowtech-dev"
+	"follow_twitch_output_channel": "#lowtech-dev",
+        "launch_output_server": "freenode",
+        "launch_output_channel": "#lowtech-dev"
     }
 }
 ```
