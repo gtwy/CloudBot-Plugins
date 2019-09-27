@@ -18,7 +18,7 @@ from cloudbot.util import database
 
 
 # Sqlachemy tables and functions
-table = Table('next_launch',
+table = Table('launchlibrary',
       database.metadata,
       Column('launchid', Integer, primary_key=True),
       Column('netdate', DateTime),
@@ -175,7 +175,7 @@ async def launchlibrarybot(bot, async_call, db):
             await add_entry(async_call, db, lch.id, lch.net)
             await load_cache(async_call, db)
 
-         if not datesame: # NET date changed. Update database
+         if exists and not datesame: # NET date changed. Update database
             await update_entry(async_call, db, lch.id, lch.net)
             await load_cache(async_call, db)
 
@@ -191,14 +191,14 @@ async def launchlibrarybot(bot, async_call, db):
             await notify_entry01(async_call, db, lch.id, False)
             await load_cache(async_call, db)
 
-         if didnotify24 == False and lch.net < (datetime.now(timezone.utc) + (timedelta(hours=24))):  # Less than T-24 hrs until launch
+         if not didnotify24 and lch.net < (datetime.now(timezone.utc) + timedelta(hours=24)):  # Less than T-24 hrs until launch
             await notify_entry24(async_call, db, lch.id)
             await load_cache(async_call, db)
 
             # Send a message to the channel that T-24 hrs til launch
             sendLaunch(bot, async_call, db, launchOut(lch))
 
-         if didnotify01 == False and lch.net < (datetime.now(timezone.utc) + (timedelta(hours=1))):   # Less than T-1 hr until launch
+         if not didnotify01 and lch.net < (datetime.now(timezone.utc) + timedelta(hours=1)):   # Less than T-1 hr until launch
             await notify_entry01(async_call, db, lch.id)
             await load_cache(async_call, db)
 
