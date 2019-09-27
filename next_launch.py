@@ -3,7 +3,7 @@
 #   Responds to commands "nextlaunch" / "nl" with the next rocket launch.
 #   Add a search term to search. E.g. "nl falcon 9"
 #
-#   Future versions of this script will automatically broadcast if a launch is imminent
+#   Script will automatically broadcast if a launch is imminent
 #
 #   Requirements:
 #      * launchlibrary API      https://pypi.org/project/python-launch-library/
