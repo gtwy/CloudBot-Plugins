@@ -114,7 +114,18 @@ def launchOut(lch):
    if lch.tbddate==1 or lch.tbdtime==1:
       lchout += 'TBD/NET ' + str(lch.net)
    else:
-      lchout += 'NET ' + str(lch.net) + ' - T-' + str(lch.net - datetime.now(timezone.utc))
+      countd = lch.net - datetime.now(timezone.utc)
+      days, countr = divmod(countd.seconds, 86400)
+      hours, countr = divmod(countr, 3600)
+      minutes, seconds = divmod(countr, 60)
+      countout = ''
+      if int(days) > 0:
+         countout += ('{} day'.format(days))
+         if int(days) > 1:
+            countout += 's'
+         countout += ' '
+      final = '{}{:02}:{:02}:{:02}'.format(countout, int(hours), int(minutes), int(seconds))
+      lchout += 'NET ' + str(lch.net) + ' - T-' + final
 
    return lchout;
 
