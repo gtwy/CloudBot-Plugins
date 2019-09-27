@@ -60,7 +60,7 @@ async def notify_entry01(async_call, db, launchid, switch=True):
 
 async def del_entries(async_call, db):
    query = table.delete() \
-         .where(table.c.netdate > (datetime.now(timezone.utc) + timedelta(hours=2)))
+         .where(table.c.netdate < (datetime.now(timezone.utc) + timedelta(hours=2)))
 
    await async_call(db.execute, query)
    await async_call(db.commit)
