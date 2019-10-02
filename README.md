@@ -31,7 +31,7 @@ An example of what you can expect on your IRC channel (alt-l is the bot.)
                | Reverse Engineering Tool for Android Applications (https://redd.it/d7t41m)
 19:14:28    wx | %nl
 19:14:29 alt-l | H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan -
-               | https://youtu.be/EqGcvxZRIzI - NET 2019-09-24 16:05:05+00:00 - T-16:50:36.011158
+               | https://youtu.be/EqGcvxZRIzI - NET 2019-09-24 16:05:05+00:00 - T-16:50:36
 ```
 
 ## How to install
