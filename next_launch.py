@@ -121,7 +121,7 @@ def launchOut(lch):
             countout += 's'
          countout += ' '
       final = '{}{:02}:{:02}:{:02}'.format(countout, int(hours), int(minutes), int(seconds))
-      lchout += 'NET ' + str(lch.net) + ' - T-' + final
+      lchout += 'NET ' + lch.net.strftime('%Y-%m-%d %H:%M:%S %Z') + ' T-' + final
 
    return lchout;
 
