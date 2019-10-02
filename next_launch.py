@@ -13,15 +13,15 @@ from cloudbot.bot import bot
 from datetime import datetime, timezone, timedelta
 import launchlibrary as ll
 import re
-from sqlalchemy import Table, Column, String, DateTime, Integer, Boolean
+from sqlalchemy import Table, Column, String, Integer, Boolean
 from cloudbot.util import database
 
 
 # Sqlachemy tables and functions
-table = Table('launchlibrary',
+table = Table('launchlibrary2',
       database.metadata,
       Column('launchid', Integer, primary_key=True),
-      Column('netdate', DateTime),
+      Column('netdate', Integer),
       Column('notifyt24', Boolean, default=False),
       Column('notifyt01', Boolean, default=False)
       )
@@ -38,7 +38,6 @@ async def update_entry(async_call, db, launchid, netdate):
    query = table.update() \
          .where(table.c.launchid == launchid) \
          .values(netdate=netdate)
-
    await async_call(db.execute, query)
    await async_call(db.commit)
 
@@ -46,7 +45,6 @@ async def notify_entry24(async_call, db, launchid, switch=True):
    query = table.update() \
          .where(table.c.launchid == launchid) \
          .values(notifyt24=switch)
-
    await async_call(db.execute, query)
    await async_call(db.commit)
 
@@ -54,14 +52,13 @@ async def notify_entry01(async_call, db, launchid, switch=True):
    query = table.update() \
          .where(table.c.launchid == launchid) \
          .values(notifyt01=switch)
-
    await async_call(db.execute, query)
    await async_call(db.commit)
 
 async def del_entries(async_call, db):
+   cutoff = datetime.now(timezone.utc) - timedelta(hours=2)
    query = table.delete() \
-         .where(table.c.netdate < (datetime.now(timezone.utc) - timedelta(hours=2)))
-
+         .where(table.c.netdate < int(cutoff.timestamp()))
    await async_call(db.execute, query)
    await async_call(db.commit)
 
@@ -79,7 +76,6 @@ async def ll_api():
 async def load_cache(async_call, db):
    global ll_cache
    ll_cache = []
-
    for launchid, netdate, notifyt24, notifyt01 in (await async_call(_load_cache_db, db)):
       ll_cache.append((launchid, netdate, notifyt24, notifyt01))
 
@@ -171,23 +167,24 @@ async def launchlibrarybot(bot, async_call, db):
          datesame = False
          didnotify24 = False
          didnotify01 = False
+         lchtime = int(lch.net.timestamp())
          for result in ll_cache:
             cacheid, cachedate, notifyt24, notifyt01 = result
 
             # Get applicable record and pass variables
             if lch.id == cacheid:
                exists = True
-               if lch.net == cachedate:
+               if lchtime == cachedate:
                   datesame = True
                didnotify24 = notifyt24
                didnotify01 = notifyt01
 
          if not exists: # Add new entry to database
-            await add_entry(async_call, db, lch.id, lch.net)
+            await add_entry(async_call, db, lch.id, lchtime)
             await load_cache(async_call, db)
 
          if exists and not datesame: # NET date changed. Update database
-            await update_entry(async_call, db, lch.id, lch.net)
+            await update_entry(async_call, db, lch.id, lchtime)
             await load_cache(async_call, db)
 
             # Send message to the channel that the date has changed
