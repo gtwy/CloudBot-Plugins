@@ -5,7 +5,7 @@ Plugin | Status | Description | Prerequisites
 -------|--------|-------------|--------------
 follow twitch|Stable|Follow specified channels & announce when they go live on IRC|[python-twitch-client](https://github.com/tsifrer/python-twitch-client)
 follow twitter|Stable|Follow specified accounts & echo their tweets on IRC|[python-twitter](https://github.com/bear/python-twitter)
-next launch|Devel|Responds with next rocket launch|[launchlibrary](https://pypi.org/project/python-launch-library/)
+next launch|Stable|Alerts about upcoming rocket launches|[launchlibrary](https://pypi.org/project/python-launch-library/)
 reddit news|Stable|Follows specified subreddits & echo when top post changes on IRC|[PRAW](https://praw.readthedocs.io)
 
 ## About
@@ -31,7 +31,7 @@ An example of what you can expect on your IRC channel (alt-l is the bot.)
                | Reverse Engineering Tool for Android Applications (https://redd.it/d7t41m)
 19:14:28    wx | %nl
 19:14:29 alt-l | H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan -
-               | https://youtu.be/EqGcvxZRIzI - NET 2019-09-24 16:05:05 UTC T-16:50:36
+               | https://youtu.be/EqGcvxZRIzI - NET 2019-09-24 16:05:05 UTC (T-16:50:36)
 ```
 
 ## How to install
