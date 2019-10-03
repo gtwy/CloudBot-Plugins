@@ -108,7 +108,7 @@ def launchOut(lch):
 
    # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
    if lch.tbddate==1 or lch.tbdtime==1:
-      lchout += 'TBD/NET ' + str(lch.net)
+      lchout += 'TBD/NET ' + lch.net.strftime('%Y-%m-%d %H:%M:%S %Z')
    else:
       countd = lch.net - datetime.now(timezone.utc)
       days, countr = divmod(int(countd.total_seconds()), 86400)
