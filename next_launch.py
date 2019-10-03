@@ -111,7 +111,7 @@ def launchOut(lch):
       lchout += 'TBD/NET ' + str(lch.net)
    else:
       countd = lch.net - datetime.now(timezone.utc)
-      days, countr = divmod(countd.seconds, 86400)
+      days, countr = divmod(int(countd.total_seconds()), 86400)
       hours, countr = divmod(countr, 3600)
       minutes, seconds = divmod(countr, 60)
       countout = ''
@@ -121,7 +121,7 @@ def launchOut(lch):
             countout += 's'
          countout += ' '
       final = '{}{:02}:{:02}:{:02}'.format(countout, int(hours), int(minutes), int(seconds))
-      lchout += 'NET ' + lch.net.strftime('%Y-%m-%d %H:%M:%S %Z') + ' T-' + final
+      lchout += 'NET ' + lch.net.strftime('%Y-%m-%d %H:%M:%S %Z') + ' (T-' + final + ')'
 
    return lchout;
 
