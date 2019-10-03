@@ -98,13 +98,17 @@ def getLaunches(lchsearch=''):
    return lchlist;
 
 # Function to build the output string
-def launchOut(lch):
+def launchOut(lch, changed=False):
    # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
    lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
 
    # If a video feed exists, append to output
    if len(lch.vid_urls) > 0:
       lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' - '
+
+   # Add a notice for updated / rescheduled launches
+   if changed:
+      lchout += 'UPDATED '
 
    # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
    if lch.tbddate==1 or lch.tbdtime==1:
@@ -188,7 +192,7 @@ async def launchlibrarybot(bot, async_call, db):
             await load_cache(async_call, db)
 
             # Send message to the channel that the date has changed
-            sendLaunch(bot, async_call, db, launchOut(lch))
+            sendLaunch(bot, async_call, db, launchOut(lch, True))
 
             # New date is more than 30 hours away, reset T-24 hr notification
             if lch.net > (datetime.now(timezone.utc) + (timedelta(hours=30))):
