@@ -101,6 +101,7 @@ def getLaunches(lchsearch=''):
 def launchOut(lch, changed=False):
    # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
    lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
+   strtime = lch.net.strftime('%Y-%m-%d %H:%M:%S %Z')
 
    # If a video feed exists, append to output
    if len(lch.vid_urls) > 0:
@@ -112,7 +113,7 @@ def launchOut(lch, changed=False):
 
    # TBD or just NET. NET = No Earlier Than. If not TBD, put the countdown.
    if lch.tbddate==1 or lch.tbdtime==1:
-      lchout += 'TBD/NET ' + lch.net.strftime('%Y-%m-%d %H:%M:%S %Z')
+      lchout += 'TBD/NET ' + strtime
    else:
       countd = lch.net - datetime.now(timezone.utc)
       days, countr = divmod(int(countd.total_seconds()), 86400)
@@ -125,7 +126,7 @@ def launchOut(lch, changed=False):
             countout += 's'
          countout += ' '
       final = '{}{:02}:{:02}:{:02}'.format(countout, int(hours), int(minutes), int(seconds))
-      lchout += 'NET ' + lch.net.strftime('%Y-%m-%d %H:%M:%S %Z') + ' (T-' + final + ')'
+      lchout += 'NET ' + strtime + ' (T-' + final + ')'
 
    return lchout;
 
