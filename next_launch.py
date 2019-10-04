@@ -100,12 +100,12 @@ def getLaunches(lchsearch=''):
 # Function to build the output string
 def launchOut(lch, changed=False):
    # Name - Location. E.g.    'H-IIB 304 | Kounotori 8 (HTV-8) - Osaki Y LP2, Tanegashima, Japan - '
-   lchout = lch.name + ' - ' + lch.location.pads[0].name + ' - '
+   lchout = lch.name + ' — ' + lch.location.pads[0].name + ' — '
    strtime = lch.net.strftime('%Y-%m-%d %H:%M:%S %Z')
 
    # If a video feed exists, append to output
    if len(lch.vid_urls) > 0:
-      lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' - '
+      lchout  += re.sub(r'(www\.){0,1}youtube\.com\/watch\?v=', 'youtu.be/', lch.vid_urls[0], flags=re.IGNORECASE) + ' — '
 
    # Add a notice for updated / rescheduled launches
    if changed:
